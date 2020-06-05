@@ -6,6 +6,7 @@ public enum DndItemType {
     WEAPON,
     ACCESSORY,
     GLOVES,
+    BOOTS,
     BELT,
     AMMUNITION,
     CONTAINER,

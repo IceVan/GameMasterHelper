@@ -9,7 +9,7 @@ import javax.persistence.*;
 @Entity(name = "tdd_item_table")
 public class DndItemTable extends ItemTable {
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     private DnDItem item;
 
     @Enumerated(EnumType.STRING)

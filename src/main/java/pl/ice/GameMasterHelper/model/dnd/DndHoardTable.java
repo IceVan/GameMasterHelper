@@ -16,6 +16,9 @@ public class DndHoardTable extends HoardTable {
     @Enumerated(EnumType.STRING)
     private DndItemType valuableType;
 
+    @Enumerated(EnumType.STRING)
+    private DndItemTableType valuableTable;
+
     @Column
     private Integer valuableValue;
 

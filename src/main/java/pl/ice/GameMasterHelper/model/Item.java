@@ -12,12 +12,10 @@ public class Item {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column
     private String name;
 
-    @Column
+    @Lob
     private String description;
 
-    @Column
     private Long value;
 }

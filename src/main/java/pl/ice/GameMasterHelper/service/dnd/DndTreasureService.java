@@ -1,18 +1,17 @@
 package pl.ice.GameMasterHelper.service.dnd;
 
+import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import pl.ice.GameMasterHelper.dao.dnd.DnDItemDao;
 import pl.ice.GameMasterHelper.dao.dnd.DndHoardTableDao;
-import pl.ice.GameMasterHelper.dao.dnd.DndItemTableDao;
 import pl.ice.GameMasterHelper.model.DiceRule;
 import pl.ice.GameMasterHelper.model.dnd.*;
 
 import java.util.List;
 import java.util.Random;
-import java.util.stream.Collectors;
 
+@Log
 @Service
 public class DndTreasureService {
 
@@ -20,23 +19,21 @@ public class DndTreasureService {
     private DndItemTableRepository dndItemTableRepository;
     private DndHoardTableRepository dndHoardTableRepository;
 
-    private DnDItemDao dnDItemDao;
-    private DndItemTableDao dndItemTableDao;
     private DndHoardTableDao dndHoardTableDao;
+
+    private DndItemTablesService dndItemTablesService;
 
     @Autowired
     public DndTreasureService(DnDItemRepository dnDItemRepository,
                               DndItemTableRepository dndItemTableRepository,
                               DndHoardTableRepository dndHoardTableRepository,
-                              DnDItemDao dnDItemDao,
-                              DndItemTableDao dndItemTableDao,
-                              DndHoardTableDao dndHoardTableDao){
+                              DndHoardTableDao dndHoardTableDao,
+                              DndItemTablesService dndItemTablesService){
         this.dnDItemRepository = dnDItemRepository;
         this.dndItemTableRepository = dndItemTableRepository;
         this.dndHoardTableRepository = dndHoardTableRepository;
-        this.dnDItemDao = dnDItemDao;
-        this.dndItemTableDao = dndItemTableDao;
         this.dndHoardTableDao = dndHoardTableDao;
+        this.dndItemTablesService = dndItemTablesService;
     }
 
     public DndCurrency generateCurrency(){
@@ -63,6 +60,38 @@ public class DndTreasureService {
                 pp == null ? 0 : pp.generateValue());
     }
 
+    private DndCurrency generateCurrencyForEncounterType(DndEncounterType dndEncounterType){
+        switch (dndEncounterType){
+            case EARLY:
+                return generateCurrency(new DiceRule(6,6,100,0),
+                        new DiceRule(3,6,100,0),
+                        null,
+                        new DiceRule(2,6,10,0),
+                        null);
+            case MID:
+                return generateCurrency(new DiceRule(2,6,100,0),
+                        new DiceRule(2,6,1000,0),
+                        null,
+                        new DiceRule(6,6,100,0),
+                        new DiceRule(3,6,10,0));
+            case LATE:
+                return generateCurrency(null,
+                        null,
+                        null,
+                        new DiceRule(4,6,1000,0),
+                        new DiceRule(5,6,100,0));
+            case END:
+                return generateCurrency(null,
+                        null,
+                        null,
+                        new DiceRule(12,6,1000,0),
+                        new DiceRule(8,6,1000,0));
+            default:
+                return generateCurrency(null,null,null,null,null);
+
+        }
+    }
+
     public List<DndHoardTable> getHoardTableResults(int roll, DndEncounterType dndEncounterType){
         return dndHoardTableDao.getResultForRoll(roll, dndEncounterType);
     }
@@ -74,12 +103,39 @@ public class DndTreasureService {
     }
 
     @Transactional
-    public List<DnDItem> getRandomItemsFromTable(DndItemTableType dndItemTableType){
-        Random random = new Random();
-        List<DndItemTable> dndItemTableList = dndItemTableDao.getResultForRollInTable(random.nextInt(100)+1, dndItemTableType);
+    public DndTreasure createTreasure(DndEncounterType encounterType){
+        DndTreasure treasure = new DndTreasure();
+        treasure.setInfo("Treasure generated for " + encounterType.toString() + " game.");
+        treasure.setCurrency(generateCurrencyForEncounterType(encounterType));
 
-        return dndItemTableList.stream().map(DndItemTable::getItem).collect(Collectors.toList());
+        List<DndHoardTable> hoardTables = getRandomHoardTableResults(encounterType);
+        for(DndHoardTable hTable:hoardTables){
+            DiceRule valuableDice = hTable.getValuablesDice();
+            DiceRule itemDice = hTable.getItemsDice();
+        }
+
+        return treasure;
     }
+
+    @Transactional
+    public DndTreasure testCreateTreasure(int roll, DndEncounterType encounterType){
+        DndTreasure treasure = new DndTreasure();
+        treasure.setInfo("Treasure generated for " + encounterType.toString() + " game.");
+        treasure.setCurrency(generateCurrencyForEncounterType(encounterType));
+
+        List<DndHoardTable> hoardTables = getHoardTableResults(roll,encounterType);
+        for(DndHoardTable hTable:hoardTables){
+            DiceRule valuableDice = hTable.getValuablesDice();
+            log.info(valuableDice.toString());
+            DiceRule itemDice = hTable.getItemsDice();
+            log.info(itemDice.toString());
+
+
+        }
+
+        return treasure;
+    }
+
 
     @Transactional
     public void saveItem(DnDItem item){
