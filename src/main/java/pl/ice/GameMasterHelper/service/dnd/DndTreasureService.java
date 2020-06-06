@@ -8,6 +8,7 @@ import pl.ice.GameMasterHelper.dao.dnd.DndHoardTableDao;
 import pl.ice.GameMasterHelper.model.DiceRule;
 import pl.ice.GameMasterHelper.model.dnd.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -126,14 +127,50 @@ public class DndTreasureService {
         List<DndHoardTable> hoardTables = getHoardTableResults(roll,encounterType);
         for(DndHoardTable hTable:hoardTables){
             DiceRule valuableDice = hTable.getValuablesDice();
-            log.info(valuableDice.toString());
+            log.info(valuableDice != null ? valuableDice.toString() : null);
             DiceRule itemDice = hTable.getItemsDice();
-            log.info(itemDice.toString());
+            log.info(itemDice != null ? itemDice.toString() : null);
 
+            if(itemDice != null){
+                treasure.addItemsToList(dndItemTablesService.getRandomItemsFromTable(itemDice.generateValue(),hTable.getItemTableType()));
+            }
 
+            if(valuableDice != null){
+                treasure.addValuablesToList(dndItemTablesService.getRandomItemsFromTable(valuableDice.generateValue(),hTable.getValuableTable()));
+            }
         }
 
         return treasure;
+    }
+
+    @Transactional
+    public List<DndTreasure> createTreasures(int number, DndEncounterType encounterType){
+        List<DndTreasure> treasures = new ArrayList<>(number);
+        Random random = new Random();
+
+        for(int i = 0; i < number; i++){
+            DndTreasure treasure = new DndTreasure();
+            treasure.setInfo("Treasure generated for " + encounterType.toString() + " game.");
+            treasure.setCurrency(generateCurrencyForEncounterType(encounterType));
+
+            List<DndHoardTable> hoardTables = getHoardTableResults(random.nextInt(100)+1,encounterType);
+            for(DndHoardTable hTable:hoardTables){
+                DiceRule valuableDice = hTable.getValuablesDice();
+                DiceRule itemDice = hTable.getItemsDice();
+
+                if(itemDice != null){
+                    treasure.addItemsToList(dndItemTablesService.getRandomItemsFromTable(itemDice.generateValue(),hTable.getItemTableType()));
+                }
+
+                if(valuableDice != null){
+                    treasure.addValuablesToList(dndItemTablesService.getRandomItemsFromTable(valuableDice.generateValue(),hTable.getValuableTable()));
+                }
+            }
+
+            treasures.add(treasure);
+        }
+
+        return treasures;
     }
 
 

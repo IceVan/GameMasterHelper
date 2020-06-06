@@ -10,4 +10,5 @@ public interface DndItemTableDao {
     List<DndItemTable> getResultForRollInTable(int roll, DndItemTableType dndItemTableType);
 
     List<DndItemTable> getRandomResultInTable(DndItemTableType dndItemTableType);
+
 }

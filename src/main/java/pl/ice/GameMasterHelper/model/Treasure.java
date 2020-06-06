@@ -38,7 +38,7 @@ public class Treasure<T extends Item, R extends Currency> {
         valuables.addAll(t);
     }
 
-    public void addValuablesToList(T t){
+    public void addValuableToList(T t){
         if(valuables == null){
             valuables = new LinkedList<>();
         }
