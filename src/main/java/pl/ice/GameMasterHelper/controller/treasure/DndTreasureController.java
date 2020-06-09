@@ -1,10 +1,7 @@
 package pl.ice.GameMasterHelper.controller.treasure;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import pl.ice.GameMasterHelper.model.dnd.DndEncounterType;
 import pl.ice.GameMasterHelper.model.dnd.DndTreasure;
 import pl.ice.GameMasterHelper.model.response.DndTreasureResponse;
@@ -24,6 +21,7 @@ public class DndTreasureController {
         this.dndTreasureService = dndTreasureService;
     }
 
+    @CrossOrigin(origins = "${communication.cross.origin.angular-frontend}")
     @GetMapping("/test")
     public DndTreasureResponse testController(@RequestParam(name = "roll") int roll){
         DndTreasureResponse treasureResponse = new DndTreasureResponse();
@@ -34,6 +32,7 @@ public class DndTreasureController {
         return treasureResponse;
     }
 
+    @CrossOrigin(origins = "${communication.cross.origin.angular-frontend}")
     @GetMapping("/getTreasure")
     public DndTreasureResponse getTreasure(@RequestParam(name = "numberOfTreasures") int number, @RequestParam(name="encounterType") DndEncounterType encounterType){
         DndTreasureResponse treasureResponse = new DndTreasureResponse();
