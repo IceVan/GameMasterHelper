@@ -70,9 +70,12 @@ public class DndItemTablesService {
         Random random = new Random();
 
         for(int i = 0; i < amount; i++){
-            DndItemWrapper wrapper = new DndItemWrapper(getRandomResultFromItemTable(dndItemTableList, random.nextInt(100)+1));
-            if(!wrappers.contains(wrapper)) wrappers.add(wrapper);
-            else wrappers.get(wrappers.indexOf(wrapper)).incrementAmount();
+            DnDItem item = getRandomResultFromItemTable(dndItemTableList, random.nextInt(100)+1);
+            if(item != null){
+                DndItemWrapper wrapper = new DndItemWrapper(item);
+                if(!wrappers.contains(wrapper)) wrappers.add(wrapper);
+                else wrappers.get(wrappers.indexOf(wrapper)).incrementAmount();
+            }
         }
 
         return wrappers;
