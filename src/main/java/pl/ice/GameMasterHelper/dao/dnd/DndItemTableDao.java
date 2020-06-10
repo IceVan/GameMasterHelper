@@ -11,4 +11,5 @@ public interface DndItemTableDao {
 
     List<DndItemTable> getRandomResultInTable(DndItemTableType dndItemTableType);
 
+    List<DndItemTable> getRowsForItemTableType(DndItemTableType dndItemTableType);
 }

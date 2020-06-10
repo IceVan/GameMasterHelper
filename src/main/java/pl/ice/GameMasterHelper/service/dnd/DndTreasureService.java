@@ -43,13 +43,12 @@ public class DndTreasureService {
 
     public DndCurrency generateCurrency(int cp, int sp, int ep, int gp, int pp){
         Random r = new Random();
-        DndCurrency currency = new DndCurrency(
+        return new DndCurrency(
                 cp == 0 ? 0 : r.nextInt(cp),
                 sp == 0 ? 0 : r.nextInt(sp),
                 ep == 0 ? 0 : r.nextInt(ep),
                 gp == 0 ? 0 : r.nextInt(gp),
                 pp == 0 ? 0 : r.nextInt(pp));
-        return currency;
     }
 
     public DndCurrency generateCurrency(DiceRule cp, DiceRule sp, DiceRule ep, DiceRule gp, DiceRule pp){
@@ -132,11 +131,13 @@ public class DndTreasureService {
             log.info(itemDice != null ? itemDice.toString() : null);
 
             if(itemDice != null){
-                treasure.addItemsToList(dndItemTablesService.getRandomItemsFromTable(itemDice.generateValue(),hTable.getItemTableType()));
+//                treasure.addItemsToList(dndItemTablesService.getRandomItemsFromTable(itemDice.generateValue(),hTable.getItemTableType()));
+                treasure.addItemsToList(dndItemTablesService.getRandomItemsFromTableAsWrappers(itemDice.generateValue(),hTable.getItemTableType()));
             }
 
             if(valuableDice != null){
-                treasure.addValuablesToList(dndItemTablesService.getRandomItemsFromTable(valuableDice.generateValue(),hTable.getValuableTable()));
+//                treasure.addValuablesToList(dndItemTablesService.getRandomItemsFromTable(valuableDice.generateValue(),hTable.getValuableTable()));
+                treasure.addValuablesToList(dndItemTablesService.getRandomItemsFromTableAsWrappers(valuableDice.generateValue(),hTable.getValuableTable()));
             }
         }
 
@@ -159,11 +160,13 @@ public class DndTreasureService {
                 DiceRule itemDice = hTable.getItemsDice();
 
                 if(itemDice != null){
-                    treasure.addItemsToList(dndItemTablesService.getRandomItemsFromTable(itemDice.generateValue(),hTable.getItemTableType()));
+//                    treasure.addItemsToList(dndItemTablesService.getRandomItemsFromTable(itemDice.generateValue(),hTable.getItemTableType()));
+                    treasure.addItemsToList(dndItemTablesService.getRandomItemsFromTableAsWrappers(itemDice.generateValue(),hTable.getItemTableType()));
                 }
 
                 if(valuableDice != null){
-                    treasure.addValuablesToList(dndItemTablesService.getRandomItemsFromTable(valuableDice.generateValue(),hTable.getValuableTable()));
+//                    treasure.addValuablesToList(dndItemTablesService.getRandomItemsFromTable(valuableDice.generateValue(),hTable.getValuableTable()));
+                    treasure.addValuablesToList(dndItemTablesService.getRandomItemsFromTableAsWrappers(valuableDice.generateValue(),hTable.getValuableTable()));
                 }
             }
 

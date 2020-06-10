@@ -6,9 +6,11 @@ import org.springframework.transaction.annotation.Transactional;
 import pl.ice.GameMasterHelper.dao.dnd.DnDItemDao;
 import pl.ice.GameMasterHelper.dao.dnd.DndItemTableDao;
 import pl.ice.GameMasterHelper.model.dnd.*;
+import pl.ice.GameMasterHelper.model.response.DndItemWrapper;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 @Service
@@ -53,6 +55,41 @@ public class DndItemTablesService {
         }
 
         return valuables;
+    }
+
+    /**
+     * Getting list of random items from certain table type and returns them as wrappers.
+     * @param amount            Number of items to generate
+     * @param dndItemTableType  Type of item table
+     * @return                  List of wrapped items
+     */
+    @Transactional
+    public List<DndItemWrapper> getRandomItemsFromTableAsWrappers(int amount, DndItemTableType dndItemTableType){
+        List<DndItemTable> dndItemTableList = dndItemTableDao.getRowsForItemTableType(dndItemTableType);
+        List<DndItemWrapper> wrappers = new ArrayList<>(amount);
+        Random random = new Random();
+
+        for(int i = 0; i < amount; i++){
+            DndItemWrapper wrapper = new DndItemWrapper(getRandomResultFromItemTable(dndItemTableList, random.nextInt(100)+1));
+            if(!wrappers.contains(wrapper)) wrappers.add(wrapper);
+            else wrappers.get(wrappers.indexOf(wrapper)).incrementAmount();
+        }
+
+        return wrappers;
+    }
+
+    private DnDItem getRandomResultFromItemTable(List<DndItemTable> itemTableList){
+        Random random = new Random();
+        return getRandomResultFromItemTable(itemTableList, random.nextInt(100)+1);
+    }
+
+    private DnDItem getRandomResultFromItemTable(List<DndItemTable> itemTableList, int roll){
+
+        for(DndItemTable itemTable : itemTableList){
+            if(itemTable.isInRange(roll))
+                return itemTable.getItem();
+        }
+        return null;
     }
 
 }

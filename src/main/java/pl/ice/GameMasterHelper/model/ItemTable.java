@@ -15,4 +15,8 @@ public class ItemTable {
     private Integer rangeFrom;
 
     private Integer rangeTo;
+
+    public boolean isInRange(int i){
+        return i >= rangeFrom && i <= rangeTo;
+    }
 }

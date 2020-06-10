@@ -7,7 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 @Data
-public class Treasure<T extends Item, R extends Currency> {
+public class Treasure<T, R extends Currency> {
 
     private String info;
 
